@@ -1,0 +1,36 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  
+  body {
+    background-color: #FAF8F4;
+    color: #292524;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    letter-spacing: -0.01em;
+  }
+
+  /* Accessible focus indicators */
+  :focus-visible {
+    outline: 2px solid #57534E;
+    outline-offset: 3px;
+  }
+}
+
+@layer utilities {
+  .editorial-border {
+    border-color: #E7E5E4;
+  }
+  
+  .editorial-shadow {
+    box-shadow: 0 10px 30px -10px rgba(28, 25, 23, 0.05);
+  }
+}

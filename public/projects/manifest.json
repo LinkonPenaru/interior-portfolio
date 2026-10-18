@@ -1,0 +1,245 @@
+[
+  {
+    "project": "kitchen",
+    "source_pdf": "Id  kitchen.pdf",
+    "page": 1,
+    "filename": "kitchen-cover-sheet.webp",
+    "rel_path": "/projects/kitchen/kitchen-cover-sheet.webp",
+    "dimensions": "1522x1123",
+    "file_size_kb": 375.0
+  },
+  {
+    "project": "kitchen",
+    "source_pdf": "Id  kitchen.pdf",
+    "page": 2,
+    "filename": "kitchen-concept-style-sheet.webp",
+    "rel_path": "/projects/kitchen/kitchen-concept-style-sheet.webp",
+    "dimensions": "1497x1081",
+    "file_size_kb": 200.0
+  },
+  {
+    "project": "kitchen",
+    "source_pdf": "Id  kitchen.pdf",
+    "page": 3,
+    "filename": "kitchen-technical-joinery-details.webp",
+    "rel_path": "/projects/kitchen/kitchen-technical-joinery-details.webp",
+    "dimensions": "1892x1348",
+    "file_size_kb": 133.6
+  },
+  {
+    "project": "kitchen",
+    "source_pdf": "Id  kitchen.pdf",
+    "page": 4,
+    "filename": "kitchen-appliance-specification-schedule.webp",
+    "rel_path": "/projects/kitchen/kitchen-appliance-specification-schedule.webp",
+    "dimensions": "1841x1270",
+    "file_size_kb": 314.2
+  },
+  {
+    "project": "kitchen",
+    "source_pdf": "Id  kitchen.pdf",
+    "page": 5,
+    "filename": "kitchen-preliminary-layout-plan.webp",
+    "rel_path": "/projects/kitchen/kitchen-preliminary-layout-plan.webp",
+    "dimensions": "1819x1265",
+    "file_size_kb": 160.3
+  },
+  {
+    "project": "kitchen",
+    "source_pdf": "Id  kitchen.pdf",
+    "page": 6,
+    "filename": "kitchen-layout-floor-plan.webp",
+    "rel_path": "/projects/kitchen/kitchen-layout-floor-plan.webp",
+    "dimensions": "1650x1136",
+    "file_size_kb": 182.5
+  },
+  {
+    "project": "kitchen",
+    "source_pdf": "Id  kitchen.pdf",
+    "page": 7,
+    "filename": "kitchen-perspective-views.webp",
+    "rel_path": "/projects/kitchen/kitchen-perspective-views.webp",
+    "dimensions": "1564x1103",
+    "file_size_kb": 281.0
+  },
+  {
+    "project": "kitchen",
+    "source_pdf": "Id  kitchen.pdf",
+    "page": 8,
+    "filename": "kitchen-elevation-section-aa.webp",
+    "rel_path": "/projects/kitchen/kitchen-elevation-section-aa.webp",
+    "dimensions": "1534x1107",
+    "file_size_kb": 228.0
+  },
+  {
+    "project": "kitchen",
+    "source_pdf": "Id  kitchen.pdf",
+    "page": 9,
+    "filename": "kitchen-elevation-section-bb.webp",
+    "rel_path": "/projects/kitchen/kitchen-elevation-section-bb.webp",
+    "dimensions": "1546x1103",
+    "file_size_kb": 216.9
+  },
+  {
+    "project": "kitchen",
+    "source_pdf": "Id  kitchen.pdf",
+    "page": 10,
+    "filename": "kitchen-elevation-sections-cc-dd.webp",
+    "rel_path": "/projects/kitchen/kitchen-elevation-sections-cc-dd.webp",
+    "dimensions": "1832x1189",
+    "file_size_kb": 322.0
+  },
+  {
+    "project": "master-bedroom",
+    "source_pdf": "Id  Master bedroom.pdf",
+    "page": 1,
+    "filename": "master-bedroom-client-profile-mood-board.webp",
+    "rel_path": "/projects/master-bedroom/master-bedroom-client-profile-mood-board.webp",
+    "dimensions": "1685x1180",
+    "file_size_kb": 258.5
+  },
+  {
+    "project": "master-bedroom",
+    "source_pdf": "Id  Master bedroom.pdf",
+    "page": 2,
+    "filename": "master-bedroom-title-sheet.webp",
+    "rel_path": "/projects/master-bedroom/master-bedroom-title-sheet.webp",
+    "dimensions": "1576x1128",
+    "file_size_kb": 71.7
+  },
+  {
+    "project": "master-bedroom",
+    "source_pdf": "Id  Master bedroom.pdf",
+    "page": 3,
+    "filename": "residence-2bhk-master-layout-plan.webp",
+    "rel_path": "/projects/master-bedroom/residence-2bhk-master-layout-plan.webp",
+    "dimensions": "1585x1064",
+    "file_size_kb": 252.0
+  },
+  {
+    "project": "master-bedroom",
+    "source_pdf": "Id  Master bedroom.pdf",
+    "page": 4,
+    "filename": "master-bedroom-electrical-looping-schedule.webp",
+    "rel_path": "/projects/master-bedroom/master-bedroom-electrical-looping-schedule.webp",
+    "dimensions": "1473x1097",
+    "file_size_kb": 193.3
+  },
+  {
+    "project": "master-bedroom",
+    "source_pdf": "Id  Master bedroom.pdf",
+    "page": 5,
+    "filename": "master-bedroom-reflected-ceiling-plan.webp",
+    "rel_path": "/projects/master-bedroom/master-bedroom-reflected-ceiling-plan.webp",
+    "dimensions": "1652x1183",
+    "file_size_kb": 200.2
+  },
+  {
+    "project": "master-bedroom",
+    "source_pdf": "Id  Master bedroom.pdf",
+    "page": 6,
+    "filename": "master-bedroom-flooring-material-plan.webp",
+    "rel_path": "/projects/master-bedroom/master-bedroom-flooring-material-plan.webp",
+    "dimensions": "1559x1098",
+    "file_size_kb": 285.3
+  },
+  {
+    "project": "master-bedroom",
+    "source_pdf": "Id  Master bedroom.pdf",
+    "page": 7,
+    "filename": "master-bedroom-presentation-floor-plan.webp",
+    "rel_path": "/projects/master-bedroom/master-bedroom-presentation-floor-plan.webp",
+    "dimensions": "1666x1116",
+    "file_size_kb": 236.3
+  },
+  {
+    "project": "master-bedroom",
+    "source_pdf": "Id  Master bedroom.pdf",
+    "page": 8,
+    "filename": "master-bedroom-elevation-sections-cc-dd.webp",
+    "rel_path": "/projects/master-bedroom/master-bedroom-elevation-sections-cc-dd.webp",
+    "dimensions": "1535x1109",
+    "file_size_kb": 223.9
+  },
+  {
+    "project": "master-bedroom",
+    "source_pdf": "Id  Master bedroom.pdf",
+    "page": 9,
+    "filename": "master-bedroom-elevation-sections-aa-bb.webp",
+    "rel_path": "/projects/master-bedroom/master-bedroom-elevation-sections-aa-bb.webp",
+    "dimensions": "1512x1159",
+    "file_size_kb": 246.2
+  },
+  {
+    "project": "master-bedroom",
+    "source_pdf": "Id  Master bedroom.pdf",
+    "page": 10,
+    "filename": "master-bedroom-ensuite-bath-elevations.webp",
+    "rel_path": "/projects/master-bedroom/master-bedroom-ensuite-bath-elevations.webp",
+    "dimensions": "1568x1127",
+    "file_size_kb": 127.6
+  },
+  {
+    "project": "kids-bedroom",
+    "source_pdf": "Id (kids bedroom).pdf",
+    "page": 1,
+    "filename": "kids-bedroom-concept-mood-board.webp",
+    "rel_path": "/projects/kids-bedroom/kids-bedroom-concept-mood-board.webp",
+    "dimensions": "1366x1012",
+    "file_size_kb": 257.9
+  },
+  {
+    "project": "kids-bedroom",
+    "source_pdf": "Id (kids bedroom).pdf",
+    "page": 2,
+    "filename": "kids-bedroom-layout-floor-plan.webp",
+    "rel_path": "/projects/kids-bedroom/kids-bedroom-layout-floor-plan.webp",
+    "dimensions": "1335x1002",
+    "file_size_kb": 106.2
+  },
+  {
+    "project": "kids-bedroom",
+    "source_pdf": "Id (kids bedroom).pdf",
+    "page": 3,
+    "filename": "kids-bedroom-perspective-rainbow-elevation.webp",
+    "rel_path": "/projects/kids-bedroom/kids-bedroom-perspective-rainbow-elevation.webp",
+    "dimensions": "1374x1033",
+    "file_size_kb": 168.2
+  },
+  {
+    "project": "kids-bedroom",
+    "source_pdf": "Id (kids bedroom).pdf",
+    "page": 4,
+    "filename": "kids-bedroom-elevation-wardrobe-view.webp",
+    "rel_path": "/projects/kids-bedroom/kids-bedroom-elevation-wardrobe-view.webp",
+    "dimensions": "1344x993",
+    "file_size_kb": 121.2
+  },
+  {
+    "project": "kids-bedroom",
+    "source_pdf": "Id (kids bedroom).pdf",
+    "page": 5,
+    "filename": "kids-bedroom-ensuite-bathroom-details.webp",
+    "rel_path": "/projects/kids-bedroom/kids-bedroom-ensuite-bathroom-details.webp",
+    "dimensions": "1357x1092",
+    "file_size_kb": 198.9
+  },
+  {
+    "project": "kids-bedroom",
+    "source_pdf": "Id (kids bedroom).pdf",
+    "page": 6,
+    "filename": "kids-bedroom-starry-ceiling-plan.webp",
+    "rel_path": "/projects/kids-bedroom/kids-bedroom-starry-ceiling-plan.webp",
+    "dimensions": "1320x994",
+    "file_size_kb": 295.1
+  },
+  {
+    "project": "kids-bedroom",
+    "source_pdf": "Id (kids bedroom).pdf",
+    "page": 7,
+    "filename": "kids-bedroom-bathroom-tiling-layout.webp",
+    "rel_path": "/projects/kids-bedroom/kids-bedroom-bathroom-tiling-layout.webp",
+    "dimensions": "1437x1030",
+    "file_size_kb": 283.7
+  }
+]
