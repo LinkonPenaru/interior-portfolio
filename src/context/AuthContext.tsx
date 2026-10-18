@@ -17,6 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Local development demo admin session key
 const DEMO_ADMIN_KEY = 'demo_admin_authenticated';
+const DEMO_USER_EMAIL_KEY = 'demo_user_email';
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -63,18 +64,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     if (!isConfigured) {
       // Demo / offline mode initialization
-      const demoAuth = localStorage.getItem(DEMO_ADMIN_KEY) === 'true';
-      if (demoAuth) {
+      const savedEmail = localStorage.getItem(DEMO_USER_EMAIL_KEY);
+      const isDemoAdmin = localStorage.getItem(DEMO_ADMIN_KEY) === 'true';
+      if (savedEmail) {
         const dummyUser = {
-          id: 'demo-admin-id',
-          email: 'admin@urvieragola.design',
+          id: isDemoAdmin ? 'demo-admin-id' : 'demo-user-id',
+          email: savedEmail,
           app_metadata: {},
-          user_metadata: { name: 'Urvi G Eragola' },
+          user_metadata: { name: isDemoAdmin ? 'Urvi G Eragola' : 'Normal User' },
           aud: 'authenticated',
           created_at: new Date().toISOString(),
         } as User;
         setUser(dummyUser);
-        setIsAdmin(true);
+        setIsAdmin(isDemoAdmin);
       }
       setLoading(false);
       return;
@@ -122,17 +124,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!isConfigured) {
       // Demo authentication mode for development before user sets credentials
       if (email && password) {
-        localStorage.setItem(DEMO_ADMIN_KEY, 'true');
+        const isDemoAdmin =
+          email.toLowerCase().includes('admin') ||
+          email.toLowerCase().includes('urvi');
+        localStorage.setItem(DEMO_USER_EMAIL_KEY, email);
+        localStorage.setItem(DEMO_ADMIN_KEY, isDemoAdmin ? 'true' : 'false');
+
         const dummyUser = {
-          id: 'demo-admin-id',
+          id: isDemoAdmin ? 'demo-admin-id' : 'demo-user-id',
           email,
           app_metadata: {},
-          user_metadata: { name: 'Urvi G Eragola' },
+          user_metadata: { name: isDemoAdmin ? 'Urvi G Eragola' : 'Normal User' },
           aud: 'authenticated',
           created_at: new Date().toISOString(),
         } as User;
         setUser(dummyUser);
-        setIsAdmin(true);
+        setIsAdmin(isDemoAdmin);
         return { error: null };
       }
       return { error: new Error('Please provide email and password') };
@@ -162,6 +169,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     if (!isConfigured) {
       localStorage.removeItem(DEMO_ADMIN_KEY);
+      localStorage.removeItem(DEMO_USER_EMAIL_KEY);
       setUser(null);
       setSession(null);
       setIsAdmin(false);
