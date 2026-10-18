@@ -41,7 +41,7 @@ export const designerConfig: DesignerConfig = {
   institutionLocation: 'Mumbai, Maharashtra, India',
   academicClass: 'FYBVOC',
   rollNumber: '14',
-  contactEmail: 'urvieragola@gmail.com', // Designer's professional contact
+  contactEmail: 'eragolaurvi@gmail.com', // Designer's professional contact
   location: 'Mumbai, India',
   
   statementHeading: 'Architectural clarity, tactile materials, and spatial narratives.',
