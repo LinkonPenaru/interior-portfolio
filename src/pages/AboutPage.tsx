@@ -1,33 +1,17 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Compass, GraduationCap, Layers, CheckCircle2, Camera } from 'lucide-react';
+import { ArrowRight, Compass, GraduationCap, Layers, CheckCircle2 } from 'lucide-react';
 import { designerConfig } from '../config/designer';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useDesignerPhoto } from '../services/profileService';
 
 export const AboutPage: React.FC = () => {
-  const { photo, uploadPhoto } = useDesignerPhoto();
-  const [photoUploading, setPhotoUploading] = useState(false);
-  const photoInputRef = useRef<HTMLInputElement>(null);
+  const { photo } = useDesignerPhoto();
 
   usePageMeta({
     title: 'About & Design Philosophy',
     description: `Academic background and interior design philosophy of Urvi G Eragola at ${designerConfig.institution}, Mumbai.`,
   });
-
-  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setPhotoUploading(true);
-    try {
-      await uploadPhoto(file);
-    } catch (err) {
-      console.warn('Failed to upload photo:', err);
-    } finally {
-      setPhotoUploading(false);
-      if (photoInputRef.current) photoInputRef.current.value = '';
-    }
-  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 space-y-20 pb-28">
@@ -93,7 +77,7 @@ export const AboutPage: React.FC = () => {
         <div className="lg:col-span-5 space-y-6">
           {/* Designer Portrait Card */}
           <div className="bg-sand-50/90 border border-stone-200 p-8 space-y-4 text-center flex flex-col items-center shadow-sm">
-            <div className="relative w-36 h-36 rounded-full overflow-hidden border-2 border-stone-800 shadow-md bg-stone-200 flex items-center justify-center group transition-transform hover:scale-105">
+            <div className="w-36 h-36 rounded-full overflow-hidden border-2 border-stone-800 shadow-md bg-stone-200 flex items-center justify-center shrink-0">
               {photo ? (
                 <img
                   src={photo}
@@ -105,23 +89,6 @@ export const AboutPage: React.FC = () => {
                   UE
                 </div>
               )}
-              {/* Photo upload on hover */}
-              <input
-                ref={photoInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                onChange={handlePhotoSelect}
-                className="hidden"
-                id="about-designer-photo-input"
-              />
-              <label
-                htmlFor="about-designer-photo-input"
-                title="Click to Upload / Change Designer Photo"
-                className="absolute inset-0 rounded-full bg-stone-900/70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-cream-50 text-[10px] uppercase font-mono tracking-wider cursor-pointer text-center p-2 shadow-md"
-              >
-                <Camera className="w-5 h-5 mb-1" />
-                <span>{photoUploading ? 'Saving...' : photo ? 'Change' : 'Upload Photo'}</span>
-              </label>
             </div>
 
             <div className="space-y-1 pt-1">

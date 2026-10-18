@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
@@ -8,7 +8,6 @@ import {
   FileSpreadsheet,
   ArrowUpRight,
   Award,
-  Camera,
 } from 'lucide-react';
 import { Project } from '../types/project';
 import { projectService } from '../services/projectService';
@@ -20,9 +19,7 @@ import { useDesignerPhoto } from '../services/profileService';
 export const HomePage: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
-  const { photo, uploadPhoto } = useDesignerPhoto();
-  const [photoUploading, setPhotoUploading] = useState(false);
-  const photoInputRef = useRef<HTMLInputElement>(null);
+  const { photo } = useDesignerPhoto();
 
   usePageMeta({
     title: 'Editorial Spatial Architecture & Drafting Portfolio',
@@ -42,20 +39,6 @@ export const HomePage: React.FC = () => {
     };
     fetchProjects();
   }, []);
-
-  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setPhotoUploading(true);
-    try {
-      await uploadPhoto(file);
-    } catch (err) {
-      console.warn('Photo upload issue:', err);
-    } finally {
-      setPhotoUploading(false);
-      if (photoInputRef.current) photoInputRef.current.value = '';
-    }
-  };
 
   return (
     <div className="space-y-24 sm:space-y-32 pb-24">
@@ -103,39 +86,19 @@ export const HomePage: React.FC = () => {
                 </div>
 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pt-1">
-                  {/* Designer Photo Frame */}
-                  <div className="relative shrink-0 group">
-                    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-stone-800 shadow-md bg-stone-200 flex items-center justify-center transition-transform group-hover:scale-105">
-                      {photo ? (
-                        <img
-                          src={photo}
-                          alt={designerConfig.fullName}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex flex-col items-center justify-center bg-sand-200 text-stone-700 font-serif text-3xl font-light">
-                          UE
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Quick photo upload button on hover */}
-                    <input
-                      ref={photoInputRef}
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={handlePhotoSelect}
-                      className="hidden"
-                      id="hero-designer-photo-input"
-                    />
-                    <label
-                      htmlFor="hero-designer-photo-input"
-                      title="Click to Upload / Change Designer Photo"
-                      className="absolute inset-0 rounded-full bg-stone-900/70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-cream-50 text-[10px] uppercase font-mono tracking-wider cursor-pointer text-center p-1 shadow-md"
-                    >
-                      <Camera className="w-4 h-4 mb-0.5" />
-                      <span>{photoUploading ? 'Saving...' : photo ? 'Change' : 'Add Photo'}</span>
-                    </label>
+                  {/* Designer Photo Frame (Display Only for Public Visitors) */}
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-stone-800 shadow-md bg-stone-200 shrink-0 flex items-center justify-center">
+                    {photo ? (
+                      <img
+                        src={photo}
+                        alt={designerConfig.fullName}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center bg-sand-200 text-stone-700 font-serif text-3xl font-light">
+                        UE
+                      </div>
+                    )}
                   </div>
 
                   {/* Narrative Text */}
