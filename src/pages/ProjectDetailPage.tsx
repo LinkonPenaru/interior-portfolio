@@ -250,20 +250,32 @@ export const ProjectDetailPage: React.FC = () => {
               className="group bg-cream-50 border border-stone-200 hover:border-stone-400 transition-all cursor-pointer flex flex-col"
             >
               <div className="relative aspect-[16/11] bg-stone-100 overflow-hidden flex items-center justify-center">
-                <img
-                  src={img.url}
-                  alt={img.title}
-                  loading="lazy"
-                  className="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
-                />
+                {img.url.toLowerCase().endsWith('.pdf') ? (
+                  <div className="w-full h-full flex flex-col items-center justify-center p-6 bg-sand-100/60 text-stone-700 space-y-2 border border-dashed border-stone-300">
+                    <FileText className="w-10 h-10 text-stone-600 stroke-[1.5]" />
+                    <span className="font-mono text-xs uppercase tracking-wider font-medium text-stone-800">
+                      Architectural PDF Sheet
+                    </span>
+                    <span className="text-[11px] text-stone-500 font-light">
+                      Click to inspect full document
+                    </span>
+                  </div>
+                ) : (
+                  <img
+                    src={img.url}
+                    alt={img.title}
+                    loading="lazy"
+                    className="w-full h-full object-contain p-2 transition-transform duration-300 group-hover:scale-105"
+                  />
+                )}
                 <div className="absolute top-3 left-3">
                   <span className="text-[10px] font-mono uppercase px-2 py-0.5 bg-stone-900/85 text-cream-100 tracking-wider">
-                    {img.sheetType}
+                    {img.url.toLowerCase().endsWith('.pdf') ? 'PDF DOCUMENT' : img.sheetType}
                   </span>
                 </div>
-                <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-stone-900 text-cream-50 text-[11px] px-2.5 py-1 flex items-center gap-1">
+                <div className="absolute bottom-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity bg-stone-900 text-cream-50 text-[11px] px-2.5 py-1 flex items-center gap-1 shadow-sm">
                   <Maximize2 className="w-3 h-3" />
-                  <span>Inspect</span>
+                  <span>Inspect Sheet</span>
                 </div>
               </div>
 

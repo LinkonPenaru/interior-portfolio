@@ -13,6 +13,7 @@ import {
   CheckCircle2,
   X,
   FileImage,
+  FileText,
   Sparkles,
 } from 'lucide-react';
 import { Project, ProjectCategory, ProjectImage } from '../../types/project';
@@ -149,21 +150,24 @@ export const ProjectEditorPage: React.FC = () => {
     setGalleryUploading(true);
     setErrorMsg(null);
     try {
-      const uploadPromises = Array.from(files).map((file, idx) =>
-        uploadProjectImage(file, slug || 'gallery').then((res) => ({
+      const uploadPromises = Array.from(files).map((file, idx) => {
+        const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
+        return uploadProjectImage(file, slug || 'gallery').then((res) => ({
           id: `sheet-${Date.now()}-${idx}`,
           url: res.url,
           title: file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
-          sheetType: 'render' as const,
-          caption: 'Architectural drafting sheet presentation.',
+          sheetType: (isPdf ? 'plan' : 'render') as ProjectImage['sheetType'],
+          caption: isPdf
+            ? 'Architectural technical PDF drawing sheet.'
+            : 'Architectural photo / drafting sheet presentation.',
           sourcePage: galleryImages.length + idx + 1,
-        }))
-      );
+        }));
+      });
 
       const newSheets = await Promise.all(uploadPromises);
       setGalleryImages((prev) => [...prev, ...newSheets]);
       setIsDirty(true);
-      setSuccessMsg(`Added ${newSheets.length} sheet(s) to gallery.`);
+      setSuccessMsg(`Added ${newSheets.length} file(s) (images/PDFs) to gallery.`);
       setTimeout(() => setSuccessMsg(null), 3000);
     } catch (err: unknown) {
       setErrorMsg((err as Error).message || 'Gallery upload failed.');
@@ -561,7 +565,7 @@ export const ProjectEditorPage: React.FC = () => {
                   ref={galleryInputRef}
                   type="file"
                   multiple
-                  accept="image/jpeg,image/png,image/webp"
+                  accept="image/jpeg,image/png,image/webp,image/avif,application/pdf,.pdf"
                   onChange={handleGalleryUpload}
                   className="hidden"
                   id="gallery-file-input"
@@ -573,7 +577,7 @@ export const ProjectEditorPage: React.FC = () => {
                   }`}
                 >
                   <Upload className="w-3.5 h-3.5" />
-                  <span>{galleryUploading ? 'Uploading...' : 'Upload Sheets'}</span>
+                  <span>{galleryUploading ? 'Uploading...' : 'Upload Sheets / PDFs'}</span>
                 </label>
               </div>
             </div>
@@ -584,7 +588,7 @@ export const ProjectEditorPage: React.FC = () => {
                 <FileImage className="w-8 h-8 text-stone-400 mx-auto" />
                 <p className="text-xs text-stone-600">No gallery sheets attached yet.</p>
                 <p className="text-[11px] text-stone-400">
-                  Upload PDF renders, CAD drawings, or material boards (JPEG, PNG, WebP up to 5MB).
+                  Upload architectural drawings, CAD sheets, photos, or PDF documents (PDF up to 35MB, Images up to 15MB).
                 </p>
               </div>
             ) : (
@@ -596,11 +600,20 @@ export const ProjectEditorPage: React.FC = () => {
                   >
                     {/* Sheet Thumbnail */}
                     <div className="w-28 sm:w-36 aspect-[16/11] bg-stone-200 border border-stone-300 overflow-hidden shrink-0 flex items-center justify-center">
-                      <img
-                        src={sheet.url}
-                        alt={sheet.title}
-                        className="w-full h-full object-contain"
-                      />
+                      {sheet.url.toLowerCase().endsWith('.pdf') ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center p-2 bg-sand-100/80 text-stone-700 text-center space-y-1">
+                          <FileText className="w-7 h-7 text-stone-600" />
+                          <span className="text-[9px] font-mono uppercase tracking-wider font-semibold text-stone-800">
+                            PDF SHEET
+                          </span>
+                        </div>
+                      ) : (
+                        <img
+                          src={sheet.url}
+                          alt={sheet.title}
+                          className="w-full h-full object-contain"
+                        />
+                      )}
                     </div>
 
                     {/* Sheet Form Fields */}
@@ -772,12 +785,21 @@ export const ProjectEditorPage: React.FC = () => {
 
             {coverImage ? (
               <div className="space-y-3">
-                <div className="aspect-[16/10] bg-stone-100 border border-stone-300 overflow-hidden relative group">
-                  <img
-                    src={coverImage}
-                    alt="Cover preview"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="aspect-[16/10] bg-stone-100 border border-stone-300 overflow-hidden relative group flex items-center justify-center">
+                  {coverImage.toLowerCase().endsWith('.pdf') ? (
+                    <div className="w-full h-full flex flex-col items-center justify-center p-4 bg-sand-100 text-stone-700 space-y-1">
+                      <FileText className="w-8 h-8 text-stone-600" />
+                      <span className="text-[10px] font-mono font-semibold uppercase tracking-wider text-stone-800">
+                        PDF Cover Document
+                      </span>
+                    </div>
+                  ) : (
+                    <img
+                      src={coverImage}
+                      alt="Cover preview"
+                      className="w-full h-full object-cover"
+                    />
+                  )}
                   <div className="absolute inset-0 bg-stone-900/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
                     <label
                       htmlFor="cover-file-input"
@@ -797,7 +819,7 @@ export const ProjectEditorPage: React.FC = () => {
                 <FileImage className="w-8 h-8 text-stone-400" />
                 <span className="text-xs text-stone-600">No cover image selected</span>
                 <span className="text-[10px] text-stone-400">
-                  Recommended size: 1600x1000px WebP or JPEG
+                  Recommended size: 1600x1000px WebP, JPEG, or PDF
                 </span>
               </div>
             )}
@@ -806,7 +828,7 @@ export const ProjectEditorPage: React.FC = () => {
               <input
                 ref={coverInputRef}
                 type="file"
-                accept="image/jpeg,image/png,image/webp"
+                accept="image/jpeg,image/png,image/webp,image/avif,application/pdf,.pdf"
                 onChange={handleCoverUpload}
                 className="hidden"
                 id="cover-file-input"
