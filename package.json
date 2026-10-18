@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "clean": "node -e \"const fs=require('fs'); fs.rmSync('dist', {recursive: true, force: true});\"",
+    "build": "npm run clean && tsc && vite build && node -e \"const fs=require('fs'); if(fs.existsSync('dist/_redirects')) fs.unlinkSync('dist/_redirects');\"",
     "preview": "vite preview"
   },
   "dependencies": {
