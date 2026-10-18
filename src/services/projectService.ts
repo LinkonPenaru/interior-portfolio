@@ -63,12 +63,18 @@ export const projectService = {
         return getLocalProjects().filter((p) => p.published);
       }
 
-      if (!data || data.length === 0) {
-        // If table is not seeded yet, fallback to local projects
-        return getLocalProjects().filter((p) => p.published);
+      const dbProjects = (data || []).map((row: ProjectDbRow) => mapDbRowToProject(row));
+      
+      // Merge with static verified projects so original studies (Kitchen, Master Suite, Kids Room)
+      // are never lost when new projects are uploaded to the database
+      const dbSlugs = new Set(dbProjects.map((p) => p.slug));
+      const staticRemaining = STATIC_VERIFIED_PROJECTS.filter((p) => !dbSlugs.has(p.slug));
+      
+      let combined = [...dbProjects, ...staticRemaining].filter((p) => p.published);
+      if (category && category !== 'all') {
+        combined = combined.filter((p) => p.category === category);
       }
-
-      return data.map((row: ProjectDbRow) => mapDbRowToProject(row));
+      return combined.sort((a, b) => a.order - b.order);
     } catch (err) {
       console.error('Failed to fetch projects from Supabase:', err);
       return getLocalProjects().filter((p) => p.published);
@@ -100,15 +106,15 @@ export const projectService = {
         .maybeSingle();
 
       if (error || !data) {
-        // Fallback to local
-        const found = getLocalProjects().find((p) => p.slug === slug);
+        // Fallback to local or static verified projects
+        const found = getLocalProjects().find((p) => p.slug === slug) || STATIC_VERIFIED_PROJECTS.find((p) => p.slug === slug);
         return found || null;
       }
 
       return mapDbRowToProject(data as ProjectDbRow);
     } catch (err) {
       console.error('Failed to fetch project by slug:', err);
-      const found = getLocalProjects().find((p) => p.slug === slug);
+      const found = getLocalProjects().find((p) => p.slug === slug) || STATIC_VERIFIED_PROJECTS.find((p) => p.slug === slug);
       return found || null;
     }
   },
@@ -149,11 +155,10 @@ export const projectService = {
         return getLocalProjects().sort((a, b) => a.order - b.order);
       }
 
-      if (!data || data.length === 0) {
-        return getLocalProjects().sort((a, b) => a.order - b.order);
-      }
-
-      return data.map((row: ProjectDbRow) => mapDbRowToProject(row));
+      const dbProjects = (data || []).map((row: ProjectDbRow) => mapDbRowToProject(row));
+      const dbSlugs = new Set(dbProjects.map((p) => p.slug));
+      const staticRemaining = STATIC_VERIFIED_PROJECTS.filter((p) => !dbSlugs.has(p.slug));
+      return [...dbProjects, ...staticRemaining].sort((a, b) => a.order - b.order);
     } catch (err) {
       console.error('Failed to fetch admin projects:', err);
       return getLocalProjects().sort((a, b) => a.order - b.order);
@@ -176,13 +181,21 @@ export const projectService = {
         .maybeSingle();
 
       if (error || !data) {
-        return getLocalProjects().find((p) => p.id === id) || null;
+        return (
+          getLocalProjects().find((p) => p.id === id) ||
+          STATIC_VERIFIED_PROJECTS.find((p) => p.id === id) ||
+          null
+        );
       }
 
       return mapDbRowToProject(data as ProjectDbRow);
     } catch (err) {
       console.error('Failed to fetch project by id:', err);
-      return getLocalProjects().find((p) => p.id === id) || null;
+      return (
+        getLocalProjects().find((p) => p.id === id) ||
+        STATIC_VERIFIED_PROJECTS.find((p) => p.id === id) ||
+        null
+      );
     }
   },
 

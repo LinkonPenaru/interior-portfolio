@@ -17,8 +17,8 @@ export const Navbar: React.FC = () => {
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <header className="sticky top-0 z-40 w-full bg-cream-50/95 backdrop-blur-md border-b border-stone-200 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 w-full bg-cream-50/95 backdrop-blur-md border-b border-stone-200 transition-colors">
+      <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo / Designer Mark */}
           <Link
@@ -29,20 +29,20 @@ export const Navbar: React.FC = () => {
             <span className="font-serif text-2xl sm:text-3xl tracking-tight text-stone-900 font-semibold group-hover:text-stone-700 transition-colors">
               URVI G ERAGOLA
             </span>
-            <span className="text-[10px] sm:text-xs tracking-super-wide uppercase text-stone-500 font-medium -mt-1 group-hover:text-stone-700 transition-colors">
+            <span className="text-[10px] sm:text-xs tracking-[0.12em] uppercase text-stone-500 font-medium -mt-1 group-hover:text-stone-700 transition-colors">
               Interior Design & Spatial Architecture
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center space-x-8" aria-label="Main Navigation">
+          {/* Desktop Navigation (>= 768px) */}
+          <nav className="hidden md:flex items-center space-x-7 lg:space-x-8" aria-label="Main Navigation">
             {navLinks.map((link) => {
               const isActive = location.pathname === link.path;
               return (
                 <NavLink
                   key={link.path}
                   to={link.path}
-                  className={`text-xs uppercase tracking-super-wide transition-all duration-200 pb-1 relative ${
+                  className={`text-xs uppercase tracking-[0.12em] transition-all duration-200 pb-1 relative ${
                     isActive
                       ? 'text-stone-950 font-semibold'
                       : 'text-stone-600 hover:text-stone-950'
@@ -57,21 +57,21 @@ export const Navbar: React.FC = () => {
             })}
             <Link
               to="/contact"
-              className="inline-flex items-center gap-1.5 px-4 py-2 border border-stone-800 text-xs uppercase tracking-wider text-stone-900 hover:bg-stone-900 hover:text-cream-50 transition-all duration-200"
+              className="inline-flex items-center gap-1.5 px-4 py-2 border border-stone-800 text-xs uppercase tracking-[0.12em] text-stone-900 hover:bg-stone-900 hover:text-cream-50 transition-all duration-200"
             >
               <span>Inquire</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </Link>
           </nav>
 
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
+          {/* Mobile Hamburger Menu Button (< 768px) */}
+          <div className="flex md:hidden items-center">
             <button
               type="button"
               onClick={toggleMenu}
               aria-expanded={isOpen}
               aria-label={isOpen ? 'Close navigation menu' : 'Open navigation menu'}
-              className="p-2 text-stone-700 hover:text-stone-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-600 rounded-sm"
+              className="p-2 text-stone-800 hover:text-stone-950 focus:outline-none focus-visible:ring-2 focus-visible:ring-stone-600 rounded-sm transition-colors"
             >
               {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -79,38 +79,40 @@ export const Navbar: React.FC = () => {
         </div>
       </div>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer (< 768px) */}
       {isOpen && (
-        <div className="md:hidden border-b border-stone-200 bg-cream-50 px-4 pt-3 pb-6 space-y-4 shadow-lg animate-fadeIn">
-          <nav className="flex flex-col space-y-3" aria-label="Mobile Navigation">
-            {navLinks.map((link) => {
-              const isActive = location.pathname === link.path;
-              return (
-                <NavLink
-                  key={link.path}
-                  to={link.path}
+        <div className="md:hidden border-b border-stone-200 bg-cream-50/98 backdrop-blur-md px-4 pt-3 pb-6 shadow-lg animate-fadeIn w-full">
+          <div className="max-w-[1200px] mx-auto">
+            <nav className="flex flex-col space-y-2" aria-label="Mobile Navigation">
+              {navLinks.map((link) => {
+                const isActive = location.pathname === link.path;
+                return (
+                  <NavLink
+                    key={link.path}
+                    to={link.path}
+                    onClick={closeMenu}
+                    className={`text-xs uppercase tracking-[0.12em] py-2.5 px-3 rounded transition-colors ${
+                      isActive
+                        ? 'bg-stone-200/60 text-stone-950 font-semibold'
+                        : 'text-stone-700 hover:bg-stone-100 hover:text-stone-950'
+                    }`}
+                  >
+                    {link.label}
+                  </NavLink>
+                );
+              })}
+              <div className="pt-3">
+                <Link
+                  to="/contact"
                   onClick={closeMenu}
-                  className={`text-sm uppercase tracking-extra-wide py-2 px-3 rounded transition-colors ${
-                    isActive
-                      ? 'bg-stone-200/60 text-stone-950 font-semibold'
-                      : 'text-stone-700 hover:bg-stone-100 hover:text-stone-950'
-                  }`}
+                  className="w-full flex items-center justify-center gap-2 py-3 bg-stone-900 text-cream-50 text-xs uppercase tracking-[0.12em] hover:bg-stone-800 transition-colors"
                 >
-                  {link.label}
-                </NavLink>
-              );
-            })}
-            <div className="pt-2">
-              <Link
-                to="/contact"
-                onClick={closeMenu}
-                className="w-full flex items-center justify-center gap-2 py-3 bg-stone-900 text-cream-50 text-xs uppercase tracking-wider"
-              >
-                <span>Get In Touch</span>
-                <ArrowUpRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </nav>
+                  <span>Get In Touch</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </nav>
+          </div>
         </div>
       )}
     </header>

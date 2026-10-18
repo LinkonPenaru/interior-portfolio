@@ -5,15 +5,15 @@ import { designerConfig } from '../../config/designer';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-stone-900 text-stone-300 border-t border-stone-800 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16">
+    <footer className="w-full bg-stone-900 text-stone-300 border-t border-stone-800 transition-colors">
+      <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-[clamp(2.5rem,4vw,4rem)]">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 lg:gap-16">
           {/* Brand Statement */}
           <div className="md:col-span-5 space-y-4">
             <h2 className="font-serif text-2xl lg:text-3xl text-cream-100 font-light tracking-wide">
               Urvi G Eragola
             </h2>
-            <p className="text-xs uppercase tracking-super-wide text-stone-400">
+            <p className="text-xs uppercase tracking-[0.12em] text-stone-400">
               Spatial Planning • Interior Architecture • Technical Drafting
             </p>
             <p className="text-sm text-stone-400 leading-relaxed font-light max-w-sm pt-2">
@@ -23,7 +23,7 @@ export const Footer: React.FC = () => {
 
           {/* Quick Links */}
           <div className="md:col-span-3 space-y-4">
-            <h3 className="text-xs uppercase tracking-super-wide text-stone-400 font-semibold">
+            <h3 className="text-xs uppercase tracking-[0.12em] text-stone-400 font-semibold">
               Exploration
             </h3>
             <ul className="space-y-2.5 text-sm">
@@ -62,7 +62,7 @@ export const Footer: React.FC = () => {
 
           {/* Academic & Inquiries */}
           <div className="md:col-span-4 space-y-4">
-            <h3 className="text-xs uppercase tracking-super-wide text-stone-400 font-semibold">
+            <h3 className="text-xs uppercase tracking-[0.12em] text-stone-400 font-semibold">
               Academic & Inquiries
             </h3>
             <div className="space-y-2 text-sm text-stone-400">
@@ -76,7 +76,7 @@ export const Footer: React.FC = () => {
             <div className="pt-3">
               <Link
                 to="/contact"
-                className="inline-flex items-center gap-2 text-xs uppercase tracking-extra-wide text-cream-100 border-b border-stone-600 pb-1 hover:border-cream-100 hover:text-white transition-colors"
+                className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.12em] text-cream-100 border-b border-stone-600 pb-1 hover:border-cream-100 hover:text-white transition-colors"
               >
                 <span>Initiate a Conversation</span>
                 <ArrowUpRight className="w-4 h-4" />
@@ -86,7 +86,7 @@ export const Footer: React.FC = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="mt-16 pt-8 border-t border-stone-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500 gap-4">
+        <div className="mt-12 sm:mt-14 pt-6 sm:pt-8 border-t border-stone-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500 gap-4">
           <p>© {new Date().getFullYear()} {designerConfig.fullName}. All interior designs and architectural drawings reserved.</p>
           <div className="flex items-center space-x-4 text-[11px] tracking-wider uppercase font-mono">
             <span>{designerConfig.institution}</span>

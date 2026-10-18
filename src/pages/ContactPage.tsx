@@ -49,13 +49,13 @@ export const ContactPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 space-y-16 pb-28">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-[clamp(2.5rem,4vw,4.5rem)] space-y-[clamp(2rem,3.5vw,3.5rem)]">
       {/* Header */}
-      <div className="border-b border-stone-200 pb-10 space-y-4 max-w-3xl">
-        <span className="text-xs uppercase tracking-super-wide text-stone-500 font-mono">
+      <div className="border-b border-stone-200 pb-8 sm:pb-10 space-y-3 sm:space-y-4 max-w-3xl">
+        <span className="text-xs uppercase tracking-[0.12em] text-stone-500 font-mono">
           Inquiries & Professional Collaboration
         </span>
-        <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl text-stone-900 font-light">
+        <h1 className="font-serif text-[clamp(2.5rem,4.5vw,4.25rem)] text-stone-900 font-light leading-[1.14]">
           Get in Touch
         </h1>
         <p className="text-stone-600 text-sm sm:text-base font-light leading-relaxed">

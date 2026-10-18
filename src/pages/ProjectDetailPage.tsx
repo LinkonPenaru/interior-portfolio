@@ -68,13 +68,13 @@ export const ProjectDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="pb-28">
+    <div className="w-full pb-[clamp(2.5rem,4vw,4.5rem)] overflow-x-hidden">
       {/* Top Back Navigation */}
       <div className="border-b border-stone-200 bg-cream-50/70">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-4">
           <Link
             to="/projects"
-            className="inline-flex items-center gap-2 text-xs uppercase tracking-super-wide text-stone-600 hover:text-stone-950 transition-colors"
+            className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.12em] text-stone-600 hover:text-stone-950 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             <span>Back to All Projects</span>
@@ -83,12 +83,12 @@ export const ProjectDetailPage: React.FC = () => {
       </div>
 
       {/* Hero Header */}
-      <section className="pt-12 sm:pt-16 pb-12 border-b border-stone-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="pt-[clamp(2rem,3.5vw,3.5rem)] pb-[clamp(2rem,3.5vw,3.5rem)] border-b border-stone-200">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             <div className="lg:col-span-8 space-y-4">
               <div className="flex items-center gap-2">
-                <span className="text-xs uppercase tracking-super-wide px-3 py-1 bg-stone-900 text-cream-100 font-medium">
+                <span className="text-xs uppercase tracking-[0.12em] px-3 py-1 bg-stone-900 text-cream-100 font-medium">
                   {project.category}
                 </span>
                 <span className="text-xs font-mono text-stone-500">
@@ -96,7 +96,7 @@ export const ProjectDetailPage: React.FC = () => {
                 </span>
               </div>
 
-              <h1 className="font-serif text-3xl sm:text-5xl lg:text-6xl text-stone-900 font-light tracking-tight">
+              <h1 className="font-serif text-[clamp(2.25rem,4.5vw,4rem)] text-stone-900 font-light tracking-tight leading-[1.14]">
                 {project.title}
               </h1>
 
