@@ -1,26 +1,31 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
-import { existsSync, unlinkSync } from 'fs';
+import { writeFileSync } from 'fs';
 
-// Custom Vite plugin: removes _redirects from dist after every build.
-// Cloudflare Workers + not_found_handling:"single-page-application" handles
-// SPA routing natively; a _redirects catch-all causes error code 100324.
-function removeRedirectsPlugin() {
+// Custom Vite plugin: overwrites dist/_redirects with a safe empty file.
+//
+// Why: Cloudflare's asset store caches files by content hash. If a previous
+// deployment uploaded a _redirects with "/* /index.html 200", that bad rule
+// stays cached and causes error 100324 on every redeploy — even after we
+// deleted the source file. By writing a NEW _redirects with different content,
+// Cloudflare detects the hash change, uploads the replacement, and evicts the
+// old bad rule. The file contains no redirect rules, so no loop is triggered.
+// SPA routing is handled natively by wrangler.json not_found_handling.
+function fixRedirectsPlugin() {
   return {
-    name: 'remove-cloudflare-redirects',
+    name: 'fix-cloudflare-redirects',
     closeBundle() {
       const redirectsPath = resolve(__dirname, 'dist', '_redirects');
-      if (existsSync(redirectsPath)) {
-        unlinkSync(redirectsPath);
-        console.log('[vite] Removed dist/_redirects (handled by wrangler.json)');
-      }
+      const safeContent = '# SPA routing handled by wrangler.json (not_found_handling: single-page-application)\n# No redirect rules — this file intentionally left empty.\n';
+      writeFileSync(redirectsPath, safeContent, 'utf-8');
+      console.log('[vite] Wrote safe dist/_redirects (overwrites stale Cloudflare asset cache)');
     },
   };
 }
 
 export default defineConfig({
-  plugins: [react(), removeRedirectsPlugin()],
+  plugins: [react(), fixRedirectsPlugin()],
   server: {
     port: 3000,
   },
