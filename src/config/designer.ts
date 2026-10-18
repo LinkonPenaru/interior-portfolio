@@ -17,6 +17,7 @@ export interface DesignerConfig {
   contactEmail: string;
   contactPhone?: string;
   location: string;
+  avatarUrl?: string;
   statementHeading: string;
   statementIntro: string;
   bioParagraphs: string[];

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
@@ -8,16 +8,21 @@ import {
   FileSpreadsheet,
   ArrowUpRight,
   Award,
+  Camera,
 } from 'lucide-react';
 import { Project } from '../types/project';
 import { projectService } from '../services/projectService';
 import { ProjectCard } from '../components/ui/ProjectCard';
 import { designerConfig } from '../config/designer';
 import { usePageMeta } from '../hooks/usePageMeta';
+import { useDesignerPhoto } from '../services/profileService';
 
 export const HomePage: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+  const { photo, uploadPhoto } = useDesignerPhoto();
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const photoInputRef = useRef<HTMLInputElement>(null);
 
   usePageMeta({
     title: 'Editorial Spatial Architecture & Drafting Portfolio',
@@ -37,6 +42,20 @@ export const HomePage: React.FC = () => {
     };
     fetchProjects();
   }, []);
+
+  const handlePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoUploading(true);
+    try {
+      await uploadPhoto(file);
+    } catch (err) {
+      console.warn('Photo upload issue:', err);
+    } finally {
+      setPhotoUploading(false);
+      if (photoInputRef.current) photoInputRef.current.value = '';
+    }
+  };
 
   return (
     <div className="space-y-24 sm:space-y-32 pb-24">
@@ -66,14 +85,14 @@ export const HomePage: React.FC = () => {
             </h1>
           </div>
 
-          {/* Full-Width Stretched Designer Statement Card */}
+          {/* Full-Width Stretched Designer Statement Card with Photo */}
           <div
             className="w-full p-6 sm:p-8 lg:p-10 bg-sand-50/80 border-l-2 border-stone-800 text-stone-700 shadow-sm transition-all hover:bg-sand-50 animate-fade-in-up"
             style={{ animationDelay: '200ms' }}
           >
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               
-              {/* Narrative Column (8 columns) */}
+              {/* Narrative & Photo Column (8 columns) */}
               <div className="lg:col-span-8 space-y-4">
                 <div className="flex items-center justify-between text-[11px] uppercase tracking-extra-wide text-stone-500 font-mono">
                   <span className="flex items-center gap-1.5 font-semibold text-stone-800">
@@ -82,12 +101,53 @@ export const HomePage: React.FC = () => {
                   </span>
                   <span className="sm:hidden">{designerConfig.academicClass} • Roll No: {designerConfig.rollNumber}</span>
                 </div>
-                <p className="text-lg sm:text-xl lg:text-2xl font-light leading-relaxed text-stone-900">
-                  Hi, I am <strong className="font-semibold text-stone-950">{designerConfig.fullName}</strong>. I study Interior Design at {designerConfig.institution}. My practice focuses on balanced spatial planning, precise technical drafting, curated material palettes, and purposeful interior details.
-                </p>
-                <p className="text-sm sm:text-base text-stone-600 font-light leading-relaxed">
-                  Focused on tactile materiality, ergonomic tolerances, and measured architectural drawing for residential and commercial environments.
-                </p>
+
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6 pt-1">
+                  {/* Designer Photo Frame */}
+                  <div className="relative shrink-0 group">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full overflow-hidden border-2 border-stone-800 shadow-md bg-stone-200 flex items-center justify-center transition-transform group-hover:scale-105">
+                      {photo ? (
+                        <img
+                          src={photo}
+                          alt={designerConfig.fullName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex flex-col items-center justify-center bg-sand-200 text-stone-700 font-serif text-3xl font-light">
+                          UE
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Quick photo upload button on hover */}
+                    <input
+                      ref={photoInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handlePhotoSelect}
+                      className="hidden"
+                      id="hero-designer-photo-input"
+                    />
+                    <label
+                      htmlFor="hero-designer-photo-input"
+                      title="Click to Upload / Change Designer Photo"
+                      className="absolute inset-0 rounded-full bg-stone-900/70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-cream-50 text-[10px] uppercase font-mono tracking-wider cursor-pointer text-center p-1 shadow-md"
+                    >
+                      <Camera className="w-4 h-4 mb-0.5" />
+                      <span>{photoUploading ? 'Saving...' : photo ? 'Change' : 'Add Photo'}</span>
+                    </label>
+                  </div>
+
+                  {/* Narrative Text */}
+                  <div className="space-y-2 flex-grow">
+                    <p className="text-base sm:text-lg lg:text-xl font-light leading-relaxed text-stone-900">
+                      Hi, I am <strong className="font-semibold text-stone-950">{designerConfig.fullName}</strong>. I study Interior Design at {designerConfig.institution}. My practice focuses on balanced spatial planning, precise technical drafting, curated material palettes, and purposeful interior details.
+                    </p>
+                    <p className="text-xs sm:text-sm text-stone-600 font-light leading-relaxed">
+                      Focused on tactile materiality, ergonomic tolerances, and measured architectural drawing for residential and commercial environments.
+                    </p>
+                  </div>
+                </div>
               </div>
 
               {/* Verified Metrics / Pillars (4 columns) */}

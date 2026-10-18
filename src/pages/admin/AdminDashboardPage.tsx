@@ -14,9 +14,12 @@ import {
   FolderOpen,
   CheckCircle,
   ExternalLink,
+  Camera,
 } from 'lucide-react';
 import { Project } from '../../types/project';
 import { projectService } from '../../services/projectService';
+import { useDesignerPhoto } from '../../services/profileService';
+import { designerConfig } from '../../config/designer';
 
 export const AdminDashboardPage: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -28,6 +31,26 @@ export const AdminDashboardPage: React.FC = () => {
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
   const [projectToDelete, setProjectToDelete] = useState<Project | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const { photo, uploadPhoto, removePhoto } = useDesignerPhoto();
+  const [photoUploading, setPhotoUploading] = useState(false);
+  const photoInputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleProfilePhotoSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setPhotoUploading(true);
+    setActionError(null);
+    try {
+      await uploadPhoto(file);
+      setActionSuccess('Designer profile photo updated across the website.');
+      setTimeout(() => setActionSuccess(null), 4000);
+    } catch (err: unknown) {
+      setActionError((err as Error).message || 'Failed to update profile photo.');
+    } finally {
+      setPhotoUploading(false);
+      if (photoInputRef.current) photoInputRef.current.value = '';
+    }
+  };
 
   const loadProjects = async () => {
     setLoading(true);
@@ -153,6 +176,62 @@ export const AdminDashboardPage: React.FC = () => {
           <Plus className="w-4 h-4" />
           <span>New Project</span>
         </Link>
+      </div>
+
+      {/* Designer Profile Photo Management Card */}
+      <div className="bg-white p-5 sm:p-6 border border-stone-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div className="flex items-center gap-4">
+          <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-full overflow-hidden border-2 border-stone-800 bg-sand-200 shrink-0 shadow-sm flex items-center justify-center">
+            {photo ? (
+              <img src={photo} alt={designerConfig.fullName} className="w-full h-full object-cover" />
+            ) : (
+              <span className="font-serif text-2xl font-light text-stone-700">UE</span>
+            )}
+          </div>
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <h2 className="font-serif text-xl sm:text-2xl text-stone-900 font-medium">
+                {designerConfig.fullName}
+              </h2>
+              <span className="text-[10px] font-mono uppercase px-2 py-0.5 bg-stone-100 border border-stone-300 text-stone-700 font-semibold">
+                Designer Profile Photo
+              </span>
+            </div>
+            <p className="text-xs text-stone-600 font-light">
+              {designerConfig.institution} • Class {designerConfig.academicClass} Roll No: {designerConfig.rollNumber}
+            </p>
+            <p className="text-[11px] text-stone-400">
+              This photo displays live across your Homepage hero and About & Vision page.
+            </p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 shrink-0">
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleProfilePhotoSelect}
+            className="hidden"
+            id="admin-profile-photo-upload"
+          />
+          <label
+            htmlFor="admin-profile-photo-upload"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-stone-900 text-cream-50 text-xs uppercase tracking-wider hover:bg-stone-800 transition-colors cursor-pointer shadow-sm"
+          >
+            <Camera className="w-3.5 h-3.5" />
+            <span>{photoUploading ? 'Uploading...' : photo ? 'Change Photo' : 'Upload Photo'}</span>
+          </label>
+          {photo && (
+            <button
+              type="button"
+              onClick={removePhoto}
+              className="px-3.5 py-2.5 border border-stone-300 text-stone-600 hover:text-red-700 hover:border-red-300 text-xs uppercase tracking-wider transition-colors"
+            >
+              Remove Photo
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Metrics Cards */}
