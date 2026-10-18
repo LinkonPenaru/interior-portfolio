@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import { Navbar } from './Navbar';
 import { Footer } from './Footer';
 import { ScrollToTop } from './ScrollToTop';
+import { PortfolioChatbot } from '../chat/PortfolioChatbot';
 
 export const Layout: React.FC = () => {
   return (
@@ -13,6 +14,10 @@ export const Layout: React.FC = () => {
         <Outlet />
       </main>
       <Footer />
+      {/* Interactive AI Design & Portfolio Assistant */}
+      <PortfolioChatbot />
     </div>
   );
 };
+
+export default Layout;
