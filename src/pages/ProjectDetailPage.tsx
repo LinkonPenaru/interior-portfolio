@@ -17,6 +17,7 @@ import { Project } from '../types/project';
 import { projectService } from '../services/projectService';
 import { Lightbox } from '../components/ui/Lightbox';
 import { NotFoundPage } from './NotFoundPage';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const ProjectDetailPage: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -27,6 +28,12 @@ export const ProjectDetailPage: React.FC = () => {
   });
   const [loading, setLoading] = useState(true);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  usePageMeta({
+    title: project ? project.title : 'Architectural Project Showcase',
+    description: project ? project.shortDescription : 'Architectural portfolio project details and verified drafting sheets.',
+    ogImage: project?.coverImage,
+  });
 
   useEffect(() => {
     if (!slug) return;

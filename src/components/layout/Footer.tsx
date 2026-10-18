@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
+import { designerConfig } from '../../config/designer';
 
 export const Footer: React.FC = () => {
   return (
@@ -86,13 +87,13 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Bar */}
         <div className="mt-16 pt-8 border-t border-stone-800/80 flex flex-col sm:flex-row items-center justify-between text-xs text-stone-500 gap-4">
-          <p>© {new Date().getFullYear()} Urvi G Eragola. All interior designs and architectural drawings reserved.</p>
-          <div className="flex items-center space-x-6 text-[11px] tracking-wider uppercase">
-            <span>Phase 1 Portfolio Build</span>
+          <p>© {new Date().getFullYear()} {designerConfig.fullName}. All interior designs and architectural drawings reserved.</p>
+          <div className="flex items-center space-x-4 text-[11px] tracking-wider uppercase font-mono">
+            <span>{designerConfig.institution}</span>
             <span>•</span>
-            <span>Supabase Ready</span>
-            <span>•</span>
-            <span>Cloudflare Pages</span>
+            <Link to="/admin/login" className="hover:text-stone-300 transition-colors underline decoration-stone-700 underline-offset-4">
+              Admin Portal
+            </Link>
           </div>
         </div>
       </div>

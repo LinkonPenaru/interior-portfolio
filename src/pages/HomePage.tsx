@@ -4,10 +4,17 @@ import { ArrowRight, Compass, Ruler, Sparkles, FileSpreadsheet, ArrowUpRight } f
 import { Project } from '../types/project';
 import { projectService } from '../services/projectService';
 import { ProjectCard } from '../components/ui/ProjectCard';
+import { designerConfig } from '../config/designer';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const HomePage: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
+
+  usePageMeta({
+    title: 'Editorial Spatial Architecture & Drafting Portfolio',
+    description: 'Portfolio of interior architect Urvi G Eragola (Rachana Sansad\'s Academy of Architecture, Mumbai). Contemporary kitchen design, thematic master suite, and celestial kids bedroom architecture.',
+  });
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -32,25 +39,25 @@ export const HomePage: React.FC = () => {
             {/* Academic Credential Tag */}
             <div className="inline-flex items-center gap-2 px-3 py-1 bg-stone-100 border border-stone-200 text-xs tracking-super-wide uppercase text-stone-600 font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-stone-500" />
-              <span>Rachana Sansad&apos;s Academy of Architecture, Mumbai</span>
+              <span>{designerConfig.institution}</span>
             </div>
 
             {/* Main Headline */}
             <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl tracking-tight text-stone-900 font-light leading-[1.08]">
-              Architectural clarity, tactile materials, and spatial narratives.
+              {designerConfig.statementHeading}
             </h1>
 
-            {/* Editable Introduction Placeholder */}
-            <div className="p-5 sm:p-6 bg-sand-50/70 border-l-2 border-stone-800 text-stone-700 space-y-2 max-w-2xl">
+            {/* Designer Statement */}
+            <div className="p-5 sm:p-6 bg-sand-50/70 border-l-2 border-stone-800 text-stone-700 space-y-3 max-w-2xl">
               <div className="flex items-center justify-between text-[11px] uppercase tracking-extra-wide text-stone-500 font-mono">
                 <span>Designer Statement</span>
-                <span>Editable Profile</span>
+                <span>{designerConfig.academicClass} • Roll No: {designerConfig.rollNumber}</span>
               </div>
               <p className="text-base sm:text-lg font-light leading-relaxed text-stone-800">
-                Hi, I am <strong className="font-semibold text-stone-950">Urvi G Eragola</strong>. I study Interior Design at Rachana Sansad&apos;s Academy of Architecture (B. Voc., Roll No: 14). My work focuses on balanced spatial planning, precise technical drafting, curated material palettes, and purposeful interior details.
+                Hi, I am <strong className="font-semibold text-stone-950">{designerConfig.fullName}</strong>. I study Interior Design at {designerConfig.institution}. My practice focuses on balanced spatial planning, precise technical drafting, curated material palettes, and purposeful interior details.
               </p>
-              <p className="text-xs text-stone-500 italic">
-                (Designer note: This introduction is fully editable in Phase 2 via the upcoming admin dashboard.)
+              <p className="text-xs text-stone-600 font-light leading-relaxed">
+                Focused on tactile materiality, ergonomic tolerances, and measured architectural drawing for residential and commercial environments.
               </p>
             </div>
 

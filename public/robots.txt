@@ -1,0 +1,7 @@
+# Robots.txt for Urvi G Eragola Architecture Portfolio
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+
+Sitemap: https://urvi-eragola-portfolio.pages.dev/sitemap.xml

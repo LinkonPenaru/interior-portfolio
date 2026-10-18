@@ -1,8 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Home, Compass } from 'lucide-react';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const NotFoundPage: React.FC = () => {
+  usePageMeta({
+    title: '404 Drawing Not Found',
+    description: 'The requested architectural sheet or portfolio route does not exist.',
+  });
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-36 text-center space-y-8">
       <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-sand-100 text-stone-700 mb-2">

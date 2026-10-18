@@ -3,11 +3,17 @@ import { Project, ProjectCategory } from '../types/project';
 import { projectService } from '../services/projectService';
 import { ProjectCard } from '../components/ui/ProjectCard';
 import { EmptyState } from '../components/ui/EmptyState';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const ProjectsPage: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory>('all');
   const [loading, setLoading] = useState(true);
+
+  usePageMeta({
+    title: 'Architectural Projects & Spatial Portfolio',
+    description: 'Explore verified architectural projects including contemporary kitchen layouts, thematic master suites, and celestial kids bedroom interior designs.',
+  });
 
   const categories: { label: string; value: ProjectCategory }[] = [
     { label: 'All Projects', value: 'all' },

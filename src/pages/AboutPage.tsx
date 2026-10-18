@@ -1,8 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Compass, GraduationCap, Award, BookOpen, Layers } from 'lucide-react';
+import { ArrowRight, Compass, GraduationCap, Layers, CheckCircle2 } from 'lucide-react';
+import { designerConfig } from '../config/designer';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 export const AboutPage: React.FC = () => {
+  usePageMeta({
+    title: 'About & Design Philosophy',
+    description: `Academic background and interior design philosophy of Urvi G Eragola at ${designerConfig.institution}, Mumbai.`,
+  });
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-20 space-y-20 pb-28">
       {/* Editorial Header */}
@@ -21,10 +28,10 @@ export const AboutPage: React.FC = () => {
         <div className="lg:col-span-7 space-y-8 text-stone-700 leading-relaxed font-light text-base sm:text-lg">
           <div className="p-6 bg-sand-50/80 border-l-2 border-stone-800 space-y-3">
             <span className="text-[11px] font-mono uppercase tracking-extra-wide text-stone-500 block">
-              Designer Biography (Editable Placeholder)
+              Designer Biography
             </span>
             <p className="text-stone-800">
-              I am <strong className="font-semibold text-stone-950">Urvi G Eragola</strong>, an interior design practitioner enrolled in the Bachelor of Vocational Studies (B. Voc. Interior Design) at <strong>Rachana Sansad&apos;s Academy of Architecture</strong> in Mumbai, Maharashtra.
+              I am <strong className="font-semibold text-stone-950">{designerConfig.fullName}</strong>, an interior design practitioner enrolled in the {designerConfig.academicCredential} at <strong>{designerConfig.institution}</strong> in {designerConfig.institutionLocation}.
             </p>
             <p className="text-sm text-stone-600">
               My design work centers on the dialogue between functional daily living and sensory atmosphere. I believe that an interior space is an emotional container—shaped by natural textures, calculated lighting levels, and thoughtful joinery detailing.
@@ -33,22 +40,33 @@ export const AboutPage: React.FC = () => {
 
           <div className="space-y-4 text-stone-700">
             <h3 className="font-serif text-2xl text-stone-900 font-medium">Design Philosophy</h3>
-            <p>
-              In my academic studio projects at Rachana Sansad, I prioritize foundational hand drafting and physical spatial awareness before digital execution. Drawing plans, elevations, sections, and electrical loops manually builds an intimate understanding of scale, clearance tolerances, and structural junctions.
-            </p>
-            <p>
-              Whether crafting a contemporary olive-and-copper kitchen, an intense theatrical master suite, or a joyful cloud-inspired bedroom for a child, my focus remains constant: human comfort, functional efficiency, and honest materiality.
-            </p>
+            {designerConfig.bioParagraphs.map((para, idx) => (
+              <p key={idx}>{para}</p>
+            ))}
           </div>
 
-          {/* Designer Input Notice */}
-          <div className="p-4 bg-stone-100 border border-stone-200 text-xs text-stone-600 space-y-1 font-mono">
-            <p className="font-semibold text-stone-800 uppercase tracking-wider">
-              [Editable Section Awaiting Designer Confirmation]
-            </p>
-            <p className="font-sans text-stone-600">
-              This biography section can be customized directly by Urvi via the Phase 2 admin dashboard to add personal awards, internship histories, or software proficiencies.
-            </p>
+          {/* Technical Proficiencies Breakdown */}
+          <div className="pt-4 space-y-4">
+            <h3 className="font-serif text-2xl text-stone-900 font-medium">
+              Technical Competencies & Studio Practices
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              {designerConfig.technicalProficiencies.map((group, idx) => (
+                <div key={idx} className="p-4 bg-sand-50 border border-stone-200 space-y-2">
+                  <h4 className="font-mono text-xs uppercase tracking-wider text-stone-900 font-semibold">
+                    {group.category}
+                  </h4>
+                  <ul className="space-y-1 text-xs text-stone-600 font-light">
+                    {group.skills.map((skill, sIdx) => (
+                      <li key={sIdx} className="flex items-start gap-1.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-stone-500 shrink-0 mt-0.5" />
+                        <span>{skill}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -59,18 +77,18 @@ export const AboutPage: React.FC = () => {
               Academic Foundation
             </h3>
 
-            <div className="space-y-4 text-sm text-stone-800">
+            <div className="space-y-5 text-sm text-stone-800">
               <div className="flex items-start gap-3">
                 <GraduationCap className="w-5 h-5 text-stone-700 shrink-0 mt-0.5" />
                 <div>
                   <span className="font-semibold block text-stone-900">
-                    B. Voc. (Interior Design)
+                    {designerConfig.academicCredential}
                   </span>
                   <span className="text-stone-600 text-xs block">
-                    Rachana Sansad&apos;s Academy of Architecture
+                    {designerConfig.institution}
                   </span>
-                  <span className="text-stone-500 text-xs block">
-                    Class FYBVOC • Roll No: 14 • Mumbai, India
+                  <span className="text-stone-500 text-xs block font-mono">
+                    Class {designerConfig.academicClass} • Roll No: {designerConfig.rollNumber} • {designerConfig.location}
                   </span>
                 </div>
               </div>
