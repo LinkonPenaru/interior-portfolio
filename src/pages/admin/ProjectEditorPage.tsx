@@ -19,6 +19,7 @@ import {
 import { Project, ProjectCategory, ProjectImage } from '../../types/project';
 import { projectService } from '../../services/projectService';
 import { uploadProjectImage } from '../../services/storageService';
+import { extractPdfPagesToImages, isPdfDocument } from '../../services/pdfService';
 
 export const ProjectEditorPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -48,11 +49,13 @@ export const ProjectEditorPage: React.FC = () => {
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [coverUploading, setCoverUploading] = useState(false);
   const [galleryUploading, setGalleryUploading] = useState(false);
+  const [pdfStatus, setPdfStatus] = useState<string | null>(null);
   const [previewOpen, setPreviewOpen] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
 
   const coverInputRef = useRef<HTMLInputElement>(null);
   const galleryInputRef = useRef<HTMLInputElement>(null);
+  const pdfInputRef = useRef<HTMLInputElement>(null);
 
   // Auto-generate slug from title
   const handleTitleChange = (val: string) => {
@@ -128,52 +131,118 @@ export const ProjectEditorPage: React.FC = () => {
 
     setCoverUploading(true);
     setErrorMsg(null);
+    setPdfStatus(null);
     try {
-      const result = await uploadProjectImage(file, slug || 'cover');
-      setCoverImage(result.url);
-      setIsDirty(true);
-      setSuccessMsg('Cover image uploaded successfully.');
-      setTimeout(() => setSuccessMsg(null), 3000);
+      if (isPdfDocument(file)) {
+        setPdfStatus(`Splitting page 1 from PDF "${file.name}" for cover...`);
+        const pages = await extractPdfPagesToImages(file, (curr, total, msg) => {
+          setPdfStatus(msg);
+        });
+        if (pages.length === 0) throw new Error('No pages found in PDF.');
+        
+        const result = await uploadProjectImage(pages[0].file, slug || 'cover');
+        setCoverImage(result.url);
+        setIsDirty(true);
+        setSuccessMsg(`Cover image extracted from Page 1 of "${file.name}".`);
+      } else {
+        const result = await uploadProjectImage(file, slug || 'cover');
+        setCoverImage(result.url);
+        setIsDirty(true);
+        setSuccessMsg('Cover image uploaded successfully.');
+      }
+      setTimeout(() => setSuccessMsg(null), 3500);
     } catch (err: unknown) {
       setErrorMsg((err as Error).message || 'Cover upload failed.');
     } finally {
       setCoverUploading(false);
+      setPdfStatus(null);
       if (coverInputRef.current) coverInputRef.current.value = '';
     }
   };
 
-  // Handle Multiple Gallery Images Upload
+  // Handle Gallery Upload with Intelligent Multi-Page PDF Splitting
   const handleGalleryUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
     setGalleryUploading(true);
     setErrorMsg(null);
-    try {
-      const uploadPromises = Array.from(files).map((file, idx) => {
-        const isPdf = file.name.toLowerCase().endsWith('.pdf') || file.type === 'application/pdf';
-        return uploadProjectImage(file, slug || 'gallery').then((res) => ({
-          id: `sheet-${Date.now()}-${idx}`,
-          url: res.url,
-          title: file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
-          sheetType: (isPdf ? 'plan' : 'render') as ProjectImage['sheetType'],
-          caption: isPdf
-            ? 'Architectural technical PDF drawing sheet.'
-            : 'Architectural photo / drafting sheet presentation.',
-          sourcePage: galleryImages.length + idx + 1,
-        }));
-      });
+    setPdfStatus(null);
 
-      const newSheets = await Promise.all(uploadPromises);
-      setGalleryImages((prev) => [...prev, ...newSheets]);
+    try {
+      const addedSheets: ProjectImage[] = [];
+
+      for (let fIdx = 0; fIdx < files.length; fIdx++) {
+        const file = files[fIdx];
+
+        if (isPdfDocument(file)) {
+          // Multi-page PDF: split into individual architectural sheets
+          setPdfStatus(`Reading PDF document "${file.name}"...`);
+          const pages = await extractPdfPagesToImages(file, (curr, total, msg) => {
+            setPdfStatus(`Processing "${file.name}": ${msg}`);
+          });
+
+          const baseCleanName = file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+
+          for (let pIdx = 0; pIdx < pages.length; pIdx++) {
+            const page = pages[pIdx];
+            setPdfStatus(`Uploading sheet ${pIdx + 1} of ${pages.length} (${page.file.name})...`);
+
+            const res = await uploadProjectImage(page.file, slug || 'gallery');
+            const pageNum = page.pageNumber;
+
+            const sheetTitle = pageNum === 1
+              ? `${baseCleanName} - Cover Sheet`
+              : `${baseCleanName} - Architectural Sheet ${pageNum}`;
+
+            const sheetType: ProjectImage['sheetType'] =
+              pageNum === 1 ? 'schedule' : (pageNum === 2 ? 'plan' : 'elevation');
+
+            addedSheets.push({
+              id: `sheet-${Date.now()}-${fIdx}-${pIdx}`,
+              url: res.url,
+              title: sheetTitle,
+              sheetType,
+              caption: `Architectural drafting sheet extracted from page ${pageNum} of ${file.name}.`,
+              sourcePage: galleryImages.length + addedSheets.length + 1,
+            });
+
+            // Automatically set first page as cover if not set yet
+            if (!coverImage && pIdx === 0 && !addedSheets[0]?.url) {
+              setCoverImage(res.url);
+            }
+          }
+        } else {
+          // Standard image upload
+          setPdfStatus(`Uploading image "${file.name}"...`);
+          const res = await uploadProjectImage(file, slug || 'gallery');
+
+          addedSheets.push({
+            id: `sheet-${Date.now()}-${fIdx}`,
+            url: res.url,
+            title: file.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
+            sheetType: 'render',
+            caption: 'Architectural drafting sheet presentation.',
+            sourcePage: galleryImages.length + addedSheets.length + 1,
+          });
+
+          if (!coverImage && fIdx === 0 && addedSheets.length === 1) {
+            setCoverImage(res.url);
+          }
+        }
+      }
+
+      setGalleryImages((prev) => [...prev, ...addedSheets]);
       setIsDirty(true);
-      setSuccessMsg(`Added ${newSheets.length} file(s) (images/PDFs) to gallery.`);
-      setTimeout(() => setSuccessMsg(null), 3000);
+      setSuccessMsg(`Successfully imported ${addedSheets.length} architectural sheet(s) into project.`);
+      setTimeout(() => setSuccessMsg(null), 4000);
     } catch (err: unknown) {
-      setErrorMsg((err as Error).message || 'Gallery upload failed.');
+      setErrorMsg((err as Error).message || 'Failed to process and upload files.');
     } finally {
       setGalleryUploading(false);
+      setPdfStatus(null);
       if (galleryInputRef.current) galleryInputRef.current.value = '';
+      if (pdfInputRef.current) pdfInputRef.current.value = '';
     }
   };
 
@@ -560,7 +629,8 @@ export const ProjectEditorPage: React.FC = () => {
                 </p>
               </div>
 
-              <div>
+              <div className="flex flex-wrap items-center gap-2">
+                {/* Standard Sheets Upload (Images) */}
                 <input
                   ref={galleryInputRef}
                   type="file"
@@ -572,23 +642,55 @@ export const ProjectEditorPage: React.FC = () => {
                 />
                 <label
                   htmlFor="gallery-file-input"
-                  className={`inline-flex items-center gap-1.5 px-3 py-2 bg-stone-800 text-cream-50 text-xs uppercase tracking-wider hover:bg-stone-900 cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-2 bg-stone-100 border border-stone-300 text-stone-800 text-xs uppercase tracking-wider hover:bg-stone-200 cursor-pointer transition-colors ${
                     galleryUploading ? 'opacity-50 pointer-events-none' : ''
                   }`}
                 >
                   <Upload className="w-3.5 h-3.5" />
-                  <span>{galleryUploading ? 'Uploading...' : 'Upload Sheets / PDFs'}</span>
+                  <span>Upload Images</span>
+                </label>
+
+                {/* Dedicated PDF Multi-Page Splitting Button */}
+                <input
+                  ref={pdfInputRef}
+                  type="file"
+                  accept="application/pdf,.pdf"
+                  onChange={handleGalleryUpload}
+                  className="hidden"
+                  id="gallery-pdf-input"
+                />
+                <label
+                  htmlFor="gallery-pdf-input"
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-2 bg-stone-900 text-cream-50 text-xs uppercase tracking-wider hover:bg-stone-800 cursor-pointer transition-colors shadow-sm ${
+                    galleryUploading ? 'opacity-50 pointer-events-none' : ''
+                  }`}
+                >
+                  <FileText className="w-3.5 h-3.5 text-amber-300" />
+                  <span>{galleryUploading && pdfStatus ? 'Splitting PDF...' : 'Split & Import PDF'}</span>
                 </label>
               </div>
             </div>
+
+            {/* Live PDF Splitting Progress Banner */}
+            {pdfStatus && (
+              <div className="p-4 bg-amber-50/90 border border-amber-300 text-xs text-amber-950 flex items-center gap-3.5 shadow-sm">
+                <FileText className="w-5 h-5 text-amber-800 shrink-0 animate-bounce" />
+                <div className="space-y-0.5">
+                  <span className="font-semibold block text-stone-900">{pdfStatus}</span>
+                  <span className="text-[11px] text-amber-900/80 font-light block">
+                    Rendering pages to 2.0x high-resolution architectural drawings and preparing sheets...
+                  </span>
+                </div>
+              </div>
+            )}
 
             {/* Gallery Images List */}
             {galleryImages.length === 0 ? (
               <div className="py-12 text-center border border-dashed border-stone-300 p-6 space-y-2">
                 <FileImage className="w-8 h-8 text-stone-400 mx-auto" />
-                <p className="text-xs text-stone-600">No gallery sheets attached yet.</p>
-                <p className="text-[11px] text-stone-400">
-                  Upload architectural drawings, CAD sheets, photos, or PDF documents (PDF up to 35MB, Images up to 15MB).
+                <p className="text-xs text-stone-600 font-medium">No gallery sheets attached yet.</p>
+                <p className="text-[11px] text-stone-400 max-w-md mx-auto">
+                  Click <strong>"Split & Import PDF"</strong> to automatically extract every page of your architectural portfolio PDF into separate sheets, or upload images individually.
                 </p>
               </div>
             ) : (
