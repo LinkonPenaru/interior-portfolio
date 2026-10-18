@@ -59,9 +59,9 @@ export const HomePage: React.FC = () => {
             </div>
           </div>
 
-          {/* Grand Stretched Headline (Spans Across the Full Width) */}
+          {/* Refined Stretched Headline */}
           <div className="animate-fade-in-up" style={{ animationDelay: '100ms' }}>
-            <h1 className="font-serif text-4xl sm:text-6xl md:text-7xl lg:text-8xl tracking-tight text-stone-900 font-light leading-[1.04] w-full">
+            <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl tracking-tight text-stone-900 font-light leading-[1.12] w-full max-w-5xl">
               Architectural clarity, tactile materials, and spatial narratives.
             </h1>
           </div>
