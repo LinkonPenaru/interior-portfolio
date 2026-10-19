@@ -15,14 +15,21 @@ import {
   CheckCircle,
   ExternalLink,
   Camera,
+  GraduationCap,
+  MapPin,
 } from 'lucide-react';
 import { Project } from '../../types/project';
 import { projectService } from '../../services/projectService';
 import { useDesignerPhoto } from '../../services/profileService';
 import { designerConfig } from '../../config/designer';
+import { AboutProfile } from '../../types/about';
+import { aboutService } from '../../services/aboutService';
+import { EditAboutModal } from '../../components/about/EditAboutModal';
 
 export const AdminDashboardPage: React.FC = () => {
   const [projects, setProjects] = useState<Project[]>([]);
+  const [aboutProfile, setAboutProfile] = useState<AboutProfile | null>(null);
+  const [isEditAboutModalOpen, setIsEditAboutModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'published' | 'draft'>('all');
@@ -65,8 +72,30 @@ export const AdminDashboardPage: React.FC = () => {
     }
   };
 
+  const loadAboutProfile = async () => {
+    try {
+      const data = await aboutService.getProfile();
+      setAboutProfile(data);
+    } catch (e) {
+      console.warn('Failed to load about profile in admin:', e);
+    }
+  };
+
   useEffect(() => {
     loadProjects();
+    loadAboutProfile();
+
+    const handleUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent<AboutProfile>;
+      if (customEvent.detail) {
+        setAboutProfile(customEvent.detail);
+      } else {
+        loadAboutProfile();
+      }
+    };
+
+    window.addEventListener('portfolio_about_updated', handleUpdate);
+    return () => window.removeEventListener('portfolio_about_updated', handleUpdate);
   }, []);
 
   const totalCount = projects.length;
@@ -231,6 +260,56 @@ export const AdminDashboardPage: React.FC = () => {
               Remove Photo
             </button>
           )}
+        </div>
+      </div>
+
+      {/* About & Academic Profile Management Card (Private Admin Control) */}
+      <div className="bg-white p-5 sm:p-6 border border-stone-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+        <div className="flex items-start gap-4">
+          <div className="w-14 h-14 bg-stone-900 text-cream-50 flex items-center justify-center shrink-0 shadow-sm">
+            <GraduationCap className="w-7 h-7 text-amber-300" />
+          </div>
+          <div className="space-y-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="font-serif text-xl sm:text-2xl text-stone-900 font-medium">
+                About Profile & Academic Credentials
+              </h2>
+              <span className="text-[10px] font-mono uppercase px-2 py-0.5 bg-emerald-50 border border-emerald-300 text-emerald-800 font-semibold">
+                Version {aboutProfile?.version || 1} • Live
+              </span>
+            </div>
+            <p className="text-xs text-stone-600 font-light">
+              <strong className="font-semibold text-stone-950">{aboutProfile?.fullName || designerConfig.fullName}</strong>
+              {aboutProfile?.headline ? ` — ${aboutProfile.headline}` : ''}
+            </p>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] font-mono text-stone-500 pt-0.5">
+              <span>📍 {aboutProfile?.location?.displayText || 'Mumbai, India'}</span>
+              <span>🎓 {aboutProfile?.education?.length || 0} Academic Credentials Recorded</span>
+              {aboutProfile?.updatedAt && (
+                <span>🕒 Last updated: {new Date(aboutProfile.updatedAt).toLocaleDateString()}</span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto justify-end">
+          <Link
+            to="/about"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2.5 border border-stone-300 text-stone-700 hover:text-stone-950 hover:border-stone-800 text-xs uppercase tracking-wider transition-colors"
+          >
+            <span>View Public Page</span>
+            <ExternalLink className="w-3.5 h-3.5" />
+          </Link>
+          <button
+            type="button"
+            onClick={() => setIsEditAboutModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 bg-stone-900 text-cream-50 text-xs uppercase tracking-wider hover:bg-stone-800 transition-colors shadow-sm"
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+            <span>Edit About & Education</span>
+          </button>
         </div>
       </div>
 
@@ -590,6 +669,13 @@ export const AdminDashboardPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Edit About & Education Modal (Private Admin Control) */}
+      <EditAboutModal
+        isOpen={isEditAboutModalOpen}
+        onClose={() => setIsEditAboutModalOpen(false)}
+        onSaved={(updated) => setAboutProfile(updated)}
+      />
     </div>
   );
 };

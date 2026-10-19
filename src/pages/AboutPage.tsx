@@ -9,39 +9,25 @@ import {
   MapPin,
   Clock,
   ExternalLink,
-  Edit3,
   Award,
-  Globe,
-  Lock,
 } from 'lucide-react';
 import { designerConfig } from '../config/designer';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { useDesignerPhoto } from '../services/profileService';
-import { useAuth } from '../context/AuthContext';
 import { AboutProfile } from '../types/about';
 import { aboutService } from '../services/aboutService';
-import { EditAboutModal } from '../components/about/EditAboutModal';
 
 export const AboutPage: React.FC = () => {
   const { photo } = useDesignerPhoto();
-  const { isAdmin } = useAuth();
-  
   const [profile, setProfile] = useState<AboutProfile | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [localTime, setLocalTime] = useState<string | null>(null);
-
-  // TODO: Replace simple password/token check with production OAuth/RBAC
-  const [authPromptOpen, setAuthPromptOpen] = useState(false);
-  const [ownerPasswordInput, setOwnerPasswordInput] = useState('');
-  const [ownerAuthError, setOwnerAuthError] = useState<string | null>(null);
-  const [isLocalOwnerSession, setIsLocalOwnerSession] = useState(false);
 
   usePageMeta({
     title: 'About & Design Philosophy',
     description: `Academic background and interior design philosophy of ${profile?.fullName || designerConfig.fullName} at ${designerConfig.institution}, Mumbai.`,
   });
 
-  // Load profile data & listen for live updates
+  // Load profile data & listen for live updates from admin edits
   useEffect(() => {
     let mounted = true;
     aboutService.getProfile().then((data) => {
@@ -99,57 +85,17 @@ export const AboutPage: React.FC = () => {
     }
   }, [profile?.location?.timezone]);
 
-  const canEdit = isAdmin || isLocalOwnerSession;
-
-  const handleOwnerAuthSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Simple demo password check for immediate owner verification
-    // TODO: Connect to backend JWT / session check
-    if (ownerPasswordInput === 'admin' || ownerPasswordInput === 'urvi2026' || ownerPasswordInput === 'password') {
-      setIsLocalOwnerSession(true);
-      setAuthPromptOpen(false);
-      setIsEditModalOpen(true);
-      setOwnerAuthError(null);
-    } else {
-      setOwnerAuthError('Incorrect owner password. (Try "admin" or log in via Admin Portal)');
-    }
-  };
-
   const sortedEducation = aboutService.getSortedEducationForPublic(profile?.education);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-[clamp(2.5rem,4vw,4.5rem)] space-y-[clamp(2.5rem,4vw,4.5rem)] overflow-x-hidden">
       
-      {/* Editorial Header with Owner Edit Button */}
-      <div className="border-b border-stone-200 pb-8 sm:pb-10 space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <span className="text-xs uppercase tracking-[0.12em] text-stone-500 font-mono">
-            Architectural Background & Vision
-          </span>
-
-          {/* Owner Action Trigger */}
-          {canEdit ? (
-            <button
-              type="button"
-              onClick={() => setIsEditModalOpen(true)}
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-stone-900 text-cream-50 text-xs uppercase tracking-[0.12em] hover:bg-stone-800 transition-colors shadow-sm self-start sm:self-auto"
-            >
-              <Edit3 className="w-3.5 h-3.5" />
-              <span>Edit About & Education</span>
-            </button>
-          ) : (
-            <button
-              type="button"
-              onClick={() => setAuthPromptOpen(true)}
-              className="text-[11px] font-mono text-stone-400 hover:text-stone-800 uppercase tracking-wider flex items-center gap-1 self-start sm:self-auto"
-            >
-              <Lock className="w-3 h-3" />
-              <span>Owner Access</span>
-            </button>
-          )}
-        </div>
-
-        <h1 className="font-serif text-[clamp(2.5rem,4.5vw,4.25rem)] text-stone-900 font-light leading-[1.14] max-w-4xl">
+      {/* Editorial Header (Clean Public View) */}
+      <div className="border-b border-stone-200 pb-8 sm:pb-10 space-y-3 sm:space-y-4 max-w-4xl">
+        <span className="text-xs uppercase tracking-[0.12em] text-stone-500 font-mono">
+          Architectural Background & Vision
+        </span>
+        <h1 className="font-serif text-[clamp(2.5rem,4.5vw,4.25rem)] text-stone-900 font-light leading-[1.14]">
           Spatial intention, tactile materiality, and rigorous architectural drafting.
         </h1>
       </div>
@@ -162,21 +108,10 @@ export const AboutPage: React.FC = () => {
           
           {/* Main Statement Box */}
           <div className="p-6 bg-sand-50/80 border-l-2 border-stone-800 space-y-3.5">
-            <div className="flex items-center justify-between text-[11px] font-mono uppercase tracking-[0.12em] text-stone-500">
-              <span className="font-semibold text-stone-800 flex items-center gap-1.5">
-                <Award className="w-3.5 h-3.5 text-stone-700" />
-                <span>Designer Biography</span>
-              </span>
-              {canEdit && (
-                <button
-                  type="button"
-                  onClick={() => setIsEditModalOpen(true)}
-                  className="text-stone-700 hover:text-stone-950 underline underline-offset-2"
-                >
-                  Edit
-                </button>
-              )}
-            </div>
+            <span className="text-[11px] font-mono uppercase tracking-[0.12em] text-stone-500 font-semibold flex items-center gap-1.5">
+              <Award className="w-3.5 h-3.5 text-stone-700" />
+              <span>Designer Biography</span>
+            </span>
 
             <p className="text-stone-900 font-light">
               I am <strong className="font-semibold text-stone-950">{profile?.fullName || designerConfig.fullName}</strong>
@@ -243,24 +178,13 @@ export const AboutPage: React.FC = () => {
           {/* DYNAMIC EDUCATION SECTION (Hides completely if no entries exist) */}
           {sortedEducation.length > 0 && (
             <div className="pt-6 space-y-6 border-t border-stone-200">
-              <div className="flex items-center justify-between">
-                <div>
-                  <span className="text-xs uppercase tracking-[0.12em] text-stone-500 font-mono block">
-                    Academic Trajectory & Diplomas
-                  </span>
-                  <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.5rem)] text-stone-900 font-light leading-[1.18] mt-1">
-                    Education & Credentials
-                  </h2>
-                </div>
-                {canEdit && (
-                  <button
-                    type="button"
-                    onClick={() => setIsEditModalOpen(true)}
-                    className="text-xs uppercase tracking-wider text-stone-600 hover:text-stone-900 border border-stone-300 px-2.5 py-1"
-                  >
-                    Manage
-                  </button>
-                )}
+              <div>
+                <span className="text-xs uppercase tracking-[0.12em] text-stone-500 font-mono block">
+                  Academic Trajectory & Diplomas
+                </span>
+                <h2 className="font-serif text-[clamp(1.75rem,3.2vw,2.5rem)] text-stone-900 font-light leading-[1.18] mt-1">
+                  Education & Credentials
+                </h2>
               </div>
 
               <div className="space-y-4">
@@ -471,68 +395,6 @@ export const AboutPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Owner Quick Verification Prompt Modal */}
-      {authPromptOpen && (
-        <div className="fixed inset-0 z-50 bg-stone-950/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-cream-50 border border-stone-800 p-6 max-w-sm w-full space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-stone-200 pb-2">
-              <div className="flex items-center gap-2 text-stone-900 font-serif text-lg">
-                <Lock className="w-4 h-4 text-stone-700" />
-                <span>Owner Authentication</span>
-              </div>
-              <button
-                type="button"
-                onClick={() => setAuthPromptOpen(false)}
-                className="text-stone-400 hover:text-stone-900"
-              >
-                ✕
-              </button>
-            </div>
-
-            <p className="text-xs text-stone-600 font-light">
-              Enter your owner admin passcode to unlock real-time editing on this page:
-            </p>
-
-            <form onSubmit={handleOwnerAuthSubmit} className="space-y-3">
-              <input
-                type="password"
-                value={ownerPasswordInput}
-                onChange={(e) => setOwnerPasswordInput(e.target.value)}
-                placeholder="Enter password..."
-                className="w-full px-3 py-2 text-xs bg-white border border-stone-300 focus:outline-none focus:border-stone-800"
-                autoFocus
-              />
-
-              {ownerAuthError && (
-                <p className="text-xs text-rose-600 font-mono">{ownerAuthError}</p>
-              )}
-
-              <div className="flex items-center justify-between pt-1">
-                <Link
-                  to="/admin/login"
-                  className="text-[11px] text-stone-500 hover:underline"
-                >
-                  Full Admin Portal →
-                </Link>
-
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-stone-900 text-cream-50 text-xs uppercase tracking-wider hover:bg-stone-800"
-                >
-                  Authenticate
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Main Edit About Modal */}
-      <EditAboutModal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        onSaved={(updated) => setProfile(updated)}
-      />
     </div>
   );
 };
